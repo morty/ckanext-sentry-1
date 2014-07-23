@@ -4,9 +4,15 @@ from ckan.plugins import implements, SingletonPlugin, IMiddleware
 
 
 class SentryPlugin(SingletonPlugin):
-    implements(IMiddleware)
+    implements(IMiddleware, inherit=True)
 
     def make_middleware(self, app, config):
+        if plugins.toolkit.check_ckan_version('2.3'):
+            return app
+        else:
+            return self.make_error_log_middleware(app, config)
+
+    def make_error_log_middleware(self, app, config):
         app = self._add_sentry(app, config)
         if config.get('sentry.configure_logging', 'true').lower() == 'true':
             self._configure_logging(config)
