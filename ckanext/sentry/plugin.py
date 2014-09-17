@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from ckan.plugins import implements, SingletonPlugin, IMiddleware
+from ckan.plugins import implements, SingletonPlugin, IMiddleware, toolkit
 
 
 class SentryPlugin(SingletonPlugin):
     implements(IMiddleware, inherit=True)
 
     def make_middleware(self, app, config):
-        if plugins.toolkit.check_ckan_version('2.3'):
+        if toolkit.check_ckan_version('2.3'):
             return app
         else:
             return self.make_error_log_middleware(app, config)
